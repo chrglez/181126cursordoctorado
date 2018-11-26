@@ -417,7 +417,7 @@ logico
 
 ---
 
-# Operaciones ocn vectores de texto. (no exhaustiva)
+# Operaciones con vectores de texto. (no exhaustiva)
 
 * Crear el vector de texto `texto1` con los valores `'curso','de','R'` y concatenar los valores de `texto1`con los de `vec1`. 
 
