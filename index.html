@@ -44,6 +44,10 @@ class: center, middle, inverse, title-slide
 
 4. [Manejo de ficheros o conjuntos de datos.](/index.html#57)
 
+5. [Estructuras básicas de programación.](/index.html#73)
+
+6. [Preparación de datos.](/index.html#87)
+
 
 ---
 
@@ -349,7 +353,7 @@ numerico + logico
 
 
 ---
-classs: middle, center
+class: middle, center
 
 # Vectores
 
@@ -554,7 +558,8 @@ vec1[c(2,4)]
 * Nombrar los elementos del vector `vec1` como `"lunes", "martes", "miercoles", "jueves", "viernes", "sabado", "domingo"`. Seleccionar el elemento correspondiente al `miercoles`.
 
 ```r
-names(vec1) &lt;- c("lunes", "martes", "miercoles", "jueves", "viernes", "sabado", "domingo")
+names(vec1) &lt;- c("lunes", "martes", "miercoles", "jueves",
+                 "viernes", "sabado", "domingo")
 vec1[c("miercoles")]
 ```
 
@@ -716,15 +721,11 @@ matriz1[2,3]
 * Seleccionar la primera fila
 
 ```r
-matriz1[1, c(1,2,3)]
+matriz1[1, c(1,2,3)] # matriz[1,]
 ```
 
 ```
 ## [1] 1 3 5
-```
-
-```r
-# matriz[1,]
 ```
 
 ---
@@ -789,7 +790,8 @@ Declarar como factor el vector `c('primarios', 'secundarios', 'superiores', 'sup
 
 
 ```r
-estudios &lt;- factor(c('primarios', 'secundarios', 'superiores', 'superiores', 'secundarios'),
+estudios &lt;- factor(c('primarios', 'secundarios', 'superiores',
+                     'superiores', 'secundarios'),
                    ordered = TRUE, 
                    levels = c('primarios', 'secundarios', 'superiores'))
 estudios
@@ -801,6 +803,9 @@ estudios
 ```
 
 En estos casos se pueden comparar los elementos de dicho factor. Sin embargo esta compareación no es posible en variables nominales 
+
+
+---
 
 
 ```r
@@ -822,7 +827,7 @@ class: middle, center
 
 &lt;ru-blockquote&gt;Es un objeto bidimensional que contiene diferentes tipos de datos. Los datos en cada columna sí deben ser del mismo tipo.&lt;/ru-blockquote&gt;
 
-Se declaran mediante la fucnión `data.frame()`.
+Se declaran mediante la función `data.frame()`.
 
 ## Ejemplo 
 
@@ -834,7 +839,8 @@ ingresos &lt;- c(1500,2300,1700,900,2100)
 residente &lt;- c(TRUE, TRUE, TRUE, FALSE, TRUE)
 isla &lt;- c("Gran Canaria","Tenerife", "Tenerife", NA, "Gran Canaria")
 
-encuesta &lt;- data.frame(sexo, ingresos, residente, isla, stringsAsFactors = FALSE)
+encuesta &lt;- data.frame(sexo, ingresos, residente, isla,
+                       stringsAsFactors = FALSE)
 encuesta
 ```
 ---
@@ -923,7 +929,9 @@ Sea el *datafame* `dfc &lt;- data.frame(hijos = round(rnorm(5,2,1),0), marca &lt
 
 ```r
 set.seed(123)
-dfc &lt;- data.frame(hijos = round(rnorm(5,2,1),0), marca &lt;- c("mercedes", "bmw", "audi", NA, "vw"), stringsAsFactors = FALSE)
+dfc &lt;- data.frame(hijos = round(rnorm(5,2,1),0),
+                  marca = c("mercedes", "bmw", "audi", NA, "vw"),
+                  stringsAsFactors = FALSE)
 cencuesta &lt;- cbind(encuesta, dfc)
 str(cencuesta)
 ```
@@ -944,7 +952,11 @@ str(cencuesta)
 Sea el *dataframe* `dfr &lt;- data.frame(sexo = c("Hombre","Mujer"), ingresos = c(1250,3000), residente = c(F, T), isla = c(NA, "Fuerteventura"), stringsAsFactors = FALSE)`. Crear un *dataframes* `rencuesta` que sea la combinación por filas de `encuesta` y `dfr`
 
 ```r
-dfr &lt;- data.frame(sexo = c("Hombre","Mujer"), ingresos = c(1250,3000), residente = c(F, T), isla = c(NA, "Fuerteventura"), stringsAsFactors = FALSE)
+dfr &lt;- data.frame(sexo = c("Hombre","Mujer"),
+                  ingresos = c(1250,3000),
+                  residente = c(F, T),
+                  isla = c(NA, "Fuerteventura"),
+                  stringsAsFactors = FALSE)
 rencuesta &lt;- rbind(encuesta, dfr)
 str(rencuesta)
 ```
@@ -1155,7 +1167,7 @@ datos &lt;- read_csv2("data/gasto_clean.csv")
 names(datos) &lt;- c("Pais",paste0("T",1:3,"_2018"))
 ## str(datos)
 ```
-.footnote[[2] Considerar el parámetro locale = locale(encoding = 'ISO-8859-1') cuando el csv está grabado desde excel para Windows.]
+.footnote[[2] Considerar el parámetro locale = locale(encoding = 'ISO-8859-1') cuando el csv está grabado desde excel para Windows. [Cheetsheet](https://github.com/rstudio/cheatsheets/blob/master/data-import.pdf)]
 ---
 
 
@@ -1295,6 +1307,402 @@ library(xlsx)
 write.xlsx(datos, file = "data/dataframes.xlsx")
 write.xlsx(encuestas, file = "data/dataframes.xlsx", append=TRUE)
 ```
+
+
+---
+class:  inverse, center, middle
+
+# Estructuras básicas de programación.
+
+---
+
+class: middle, center
+
+# Condicionales
+
+---
+
+# If
+
+Se puede controlar el flujo de ejecución mediante el uso de condicionales.
+
+&gt; if(cond){
+expresión
+}
+
+## Ejemplo
+
+Comparamos el total de gasto del primer y segundo semestre de 2018 según datos recogidos en la tabla `datos` y en caso de que el total del primer trimestre sea mayor que el del segundo imprimir por pantalla `El total de gasto del primer trimestre de 2018 fue superior al del segundo`.
+
+```r
+total1T &lt;- sum(datos$T1_2018)
+total2T &lt;- sum(datos$T2_2018)
+texto &lt;- paste0()
+if(total1T &gt; total2T){
+  print("El total de gasto del primer trimestre de 2018 fue superior al del segundo")
+}
+```
+
+```
+## [1] "El total de gasto del primer trimestre de 2018 fue superior al del segundo"
+```
+
+---
+
+# Else
+
+Mediante el uso de `else` se puede establece qué parte del código se ejecuta en caso de que la consición no se cumpla.
+
+## Ejemplo
+
+Siguiendo el ejemplo anterior, imprimir el mensaje `El total de gasto del segundo trimestre de 2018 fue superior al del primero` en caso de que no se cumpla la condición.
+
+
+```r
+if(total1T &gt; total2T){
+  print("El total de gasto del primer trimestre de 2018 fue superior al del segundo")
+} else {
+  print("El total de gasto del segundo trimestre de 2018 fue superior al del primero")
+}
+```
+
+```
+## [1] "El total de gasto del primer trimestre de 2018 fue superior al del segundo"
+```
+
+---
+
+En la transparencia [#27](/index.html#27) se introdujeron los operadores lógicos. A esta lista se deben añadir el operador lógico **y** (`&amp;`) y  el operador lógico **o** (`|`) que controlan si se cumplen varias condiciones.
+
+## Ejemplos
+
+* Seleccionar de la tabla `total` aquellos países que tengan en el primer trimestre de 2018 un gasto superior a 1500 e inferior a 2000.
+
+```r
+index &lt;- datos$T1_2018 &gt; 1500 &amp; datos$T1_2018 &lt; 2000
+datos[index,]
+```
+
+```
+## # A tibble: 2 x 4
+##   Pais            T1_2018 T2_2018 T3_2018
+##   &lt;chr&gt;             &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;
+## 1 España            1789.   1564.   1280.
+## 2 Países Nórdicos   1875.   2237.   2175.
+```
+
+---
+
+* Seleccionar de la tabla `total` aquellos países que tengan en el primer trimestre de 2018 un gasto inferior a 1500 o superior a 2000.
+
+```r
+index &lt;- datos$T1_2018 &gt; 1500 | datos$T1_2018 &lt; 2000
+datos[index,]
+```
+
+```
+## # A tibble: 6 x 4
+##   Pais            T1_2018 T2_2018 T3_2018
+##   &lt;chr&gt;             &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;
+## 1 Alemania          2149.   2281.   2123.
+## 2 España            1789.   1564.   1280.
+## 3 Holanda           2206.   1833.   1596.
+## 4 Países Nórdicos   1875.   2237.   2175.
+## 5 Reino Unido       2579.   1813.   1641.
+## 6 Otros países      2730.   1804.   2065.
+```
+
+---
+
+class: middle, center
+
+# Bucles
+
+---
+
+La estructura básica para un bucles es a través de:
+
+&gt; for (var in vec){expresiones}
+
+## Ejemplo
+
+Recorrer con un bucle la columna `T1_2018` de la tabla `datos` e imprimir el valor.
+
+```r
+for (i in datos$T1_2018){
+  print(i)
+}
+```
+
+```
+## [1] 2149.02
+## [1] 1789.3
+## [1] 2206.18
+## [1] 1875.08
+## [1] 2579.05
+## [1] 2730.37
+```
+
+---
+
+```r
+for (i in 1:length(datos$T1_2018)){
+  print(datos$T1_2018[i])
+}
+```
+
+```
+## [1] 2149.02
+## [1] 1789.3
+## [1] 2206.18
+## [1] 1875.08
+## [1] 2579.05
+## [1] 2730.37
+```
+---
+# Combibado condicionales y bucles
+
+## Ejemplo
+
+Crear un *dataframe* `datos_copia` que sea igual a `datos`. Crear en `datos_copia` la columna `gasto_mayor`, que será igual a 1 si el gasto en el primer trismestre es superior al segundo.
+
+```r
+temp &lt;- c()
+for (i in 1:nrow(datos)){
+  if(datos$T1_2018[i] &gt; datos$T2_2018[i]){
+    temp[i] &lt;- 1
+  } else
+    temp[i] &lt;- 0
+}
+datos$gasto_mayor &lt;- temp
+head(datos,3)
+```
+
+```
+## # A tibble: 3 x 5
+##   Pais     T1_2018 T2_2018 T3_2018 gasto_mayor
+##   &lt;chr&gt;      &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;       &lt;dbl&gt;
+## 1 Alemania   2149.   2281.   2123.           0
+## 2 España     1789.   1564.   1280.           1
+## 3 Holanda    2206.   1833.   1596.           1
+```
+
+---
+
+class: middle, center
+
+# Funciones
+
+---
+  
+
+```
+## Classes 'tbl_df', 'tbl' and 'data.frame':	6 obs. of  5 variables:
+##  $ Pais       : chr  "Alemania" "España" "Holanda" "Países Nórdicos" ...
+##  $ T1_2018    : num  2149 1789 2206 1875 2579 ...
+##  $ T2_2018    : num  2281 1564 1833 2237 1813 ...
+##  $ T3_2018    : num  2123 1280 1596 2175 1641 ...
+##  $ gasto_mayor: num  0 1 1 0 1 1
+##  - attr(*, "spec")=List of 2
+##   ..$ cols   :List of 4
+##   .. ..$ País                  : list()
+##   .. .. ..- attr(*, "class")= chr  "collector_character" "collector"
+##   .. ..$ 2018 Tercer trimestre : list()
+##   .. .. ..- attr(*, "class")= chr  "collector_number" "collector"
+##   .. ..$ 2018 Segundo trimestre: list()
+##   .. .. ..- attr(*, "class")= chr  "collector_number" "collector"
+##   .. ..$ 2018 Primer trimestre : list()
+##   .. .. ..- attr(*, "class")= chr  "collector_number" "collector"
+##   ..$ default: list()
+##   .. ..- attr(*, "class")= chr  "collector_guess" "collector"
+##   ..- attr(*, "class")= chr "col_spec"
+```
+
+---
+
+Para hacer la coversión a numérico tendríamos que repetir el siguiente código para cada columna.
+
+```r
+gastos$T1_2018 &lt;- gsub("\\.","",datos$T1_2018)
+gastos$T1_2018 &lt;- gsub(",","\\.",datos$T1_2018)
+gastos$T1_2018 &lt;- as.numeric(datos$T1_2018)
+```
+Podemos crear una función y aplicarla a cada columna
+
+---
+
+
+```r
+mi_funcion &lt;- function(columna){
+  columna &lt;- gsub("\\.","", columna)
+  columna &lt;- gsub(",","\\.", columna)
+  columna &lt;- as.numeric(columna)
+  columna
+}
+conv &lt;- apply(gastos[,2:4], 2, mi_funcion)
+df.gastos &lt;- data.frame(Pais = gastos$Pais,conv, stringsAsFactors = FALSE)
+df.gastos
+```
+
+```
+##                         Pais T1_2018 T2_2018 T3_2018
+## 1                   Alemania 2149.02 2281.34 2122.84
+## 2                    EspaÃ±a 1789.30 1563.97 1279.85
+## 3                    Holanda 2206.18 1832.84 1595.82
+## 4          PaÃ­ses NÃ³rdicos 1875.08 2237.31 2175.26
+## 5                Reino Unido 2579.05 1813.21 1641.40
+## 6              Otros paÃ­ses 2730.37 1803.99 2065.13
+```
+
+---
+class:  inverse, center, middle
+
+# Preparación de datos.
+
+---
+
+# Paquete dplyr &lt;sup&gt;4&lt;/sup&gt;
+
+
+```r
+# install.package(dplyr)
+library(dplyr)
+```
+
+
+Conjunto de funciones para la manipulación de datos
+
+## Funciones básicas
+
+* `mutate`. Crea una nueva columna.
+* `select`. Selecciona columnas.
+* `filter`. Filtra en función de una condición.
+* `gruop_by`. Agrupa.
+* `summarisse`. Resume.
+* `arrange`. Ordena.
+
+.footnote[[4] [Cheetsheet](https://github.com/rstudio/cheatsheets/raw/master/data-transformation.pdf)]
+---
+
+## Ejemplos
+
+* Crear el *dataframe* `seleccion` que contenga solo las columnas de gatos del primer y segundo trimestre de la tabla `gasto`
+
+```r
+seleccion &lt;- select(datos, T1_2018, T2_2018)
+seleccion &lt;- datos %&gt;% select(T1_2018, T2_2018)
+seleccion
+```
+
+```
+## # A tibble: 6 x 2
+##   T1_2018 T2_2018
+##     &lt;dbl&gt;   &lt;dbl&gt;
+## 1   2149.   2281.
+## 2   1789.   1564.
+## 3   2206.   1833.
+## 4   1875.   2237.
+## 5   2579.   1813.
+## 6   2730.   1804.
+```
+
+---
+* Crear el *dataframe* `filtrado` que contenga una nueva columna llamada `T1_100` que sea igual a la columna `1T_2018` de la tabla `gasto` dividida por 1000, seleccionar aquellos países cuyo valor en esta nueva columna sea mayor o igial a 2 y ordenarlos por el valor obtenido en esta columna.
+
+```r
+filtrado &lt;- datos %&gt;%
+  mutate(T1_100 = T1_2018/1000) %&gt;%
+  filter(T1_100 &gt;= 2) %&gt;%
+  arrange(T1_100)
+filtrado
+```
+
+```
+## # A tibble: 4 x 6
+##   Pais         T1_2018 T2_2018 T3_2018 gasto_mayor T1_100
+##   &lt;chr&gt;          &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;       &lt;dbl&gt;  &lt;dbl&gt;
+## 1 Alemania       2149.   2281.   2123.           0   2.15
+## 2 Holanda        2206.   1833.   1596.           1   2.21
+## 3 Reino Unido    2579.   1813.   1641.           1   2.58
+## 4 Otros países   2730.   1804.   2065.           1   2.73
+```
+---
+
+* Calcular el número de hombres y mujeres de la tabla `encuestas` y obtener la suma de ingresos por sexo. Guardar el resultado en la tabla `grupo`.
+
+```r
+grupo &lt;- encuesta %&gt;%
+  group_by(sexo) %&gt;%
+  summarise(num = n(),
+            suma_ing = sum(ingresos))
+grupo
+```
+
+```
+## # A tibble: 2 x 3
+##   sexo     num suma_ing
+##   &lt;fct&gt;  &lt;int&gt;    &lt;dbl&gt;
+## 1 Hombre     2     3600
+## 2 Mujer      3     4900
+```
+
+---
+
+# Paquete tidyr
+
+&gt; Contiene funciones para organizar datos en forma tabular.
+
+
+```r
+# install.packages(tidyr)
+library(tidyr)
+```
+
+
+## Ejemplo
+
+Crear la tabla `org` que contenga los valores de los tres trimetres de la tabla `datos` en una única columna.
+
+```r
+org &lt;- gastos %&gt;%
+  gather(T1_2018, T2_2018, T3_2018,
+         key = trimestre,
+         value = gasto)
+org
+```
+
+
+.footnote[[5][Cheetsheet](https://github.com/rstudio/cheatsheets/blob/master/data-import.pdf)]
+
+---
+
+
+```
+##                          Pais trimestre    gasto
+## 1                    Alemania   T1_2018 2.149,02
+## 2                     EspaÃ±a   T1_2018 1.789,30
+## 3                     Holanda   T1_2018 2.206,18
+## 4           PaÃ­ses NÃ³rdicos   T1_2018 1.875,08
+## 5                 Reino Unido   T1_2018 2.579,05
+## 6               Otros paÃ­ses   T1_2018 2.730,37
+## 7                    Alemania   T2_2018 2.281,34
+## 8                     EspaÃ±a   T2_2018 1.563,97
+## 9                     Holanda   T2_2018 1.832,84
+## 10          PaÃ­ses NÃ³rdicos   T2_2018 2.237,31
+## 11                Reino Unido   T2_2018 1.813,21
+## 12              Otros paÃ­ses   T2_2018 1.803,99
+## 13                   Alemania   T3_2018 2.122,84
+## 14                    EspaÃ±a   T3_2018 1.279,85
+## 15                    Holanda   T3_2018 1.595,82
+## 16          PaÃ­ses NÃ³rdicos   T3_2018 2.175,26
+## 17                Reino Unido   T3_2018 1.641,40
+## 18              Otros paÃ­ses   T3_2018 2.065,13
+```
+
+
+
+
+
 
 
 ---
